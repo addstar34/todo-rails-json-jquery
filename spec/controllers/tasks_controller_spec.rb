@@ -17,7 +17,7 @@ RSpec.describe TasksController, type: :controller do
     end
   end
 
-  describe "PATCH #update" do
+  describe "PUT #update" do
     it "should allow tasks to be marked as done" do
       task = FactoryGirl.create(:task, done: false)
       put :update, params: { id: task.id, task: { done: true } }
@@ -28,6 +28,12 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "POST #create" do
-    
+    it "should allow new tasks to be created" do
+      post :create, params: { task: {title: "Fix things"} }
+      expect(response).to have_http_status(:success)
+      response_value = ActiveSupport::JSON.decode(@response.body)
+      expect(response_value['title']).to eq("Fix things")
+      expect(Task.last.title).to eq("Fix things")
+    end
   end
 end
